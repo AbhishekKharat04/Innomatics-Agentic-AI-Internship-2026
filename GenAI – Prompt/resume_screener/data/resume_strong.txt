@@ -1,0 +1,39 @@
+PRIYA SHARMA
+Senior ML Engineer | priya.sharma@email.com | github.com/priyasharma | linkedin.com/in/priyasharma
+
+SUMMARY
+Senior Machine Learning Engineer with 6 years of experience building and deploying production ML systems
+at scale. Passionate about MLOps, LLM applications, and cloud-native architectures.
+
+EXPERIENCE
+
+Senior ML Engineer — TechVision AI, Bangalore (2021–Present)
+- Designed and deployed 8 production ML models serving 5M+ daily predictions on AWS SageMaker
+- Built end-to-end ML pipelines using Airflow, cutting model retraining time by 60%
+- Led migration of legacy batch scoring to real-time FastAPI microservices on ECS
+- Implemented MLflow experiment tracking across 3 product teams (15+ engineers)
+- Developed LangChain-based document QA system using RAG, reducing support ticket volume by 40%
+- Containerized all ML services with Docker and orchestrated via Kubernetes (EKS)
+
+ML Engineer — DataBridge Solutions, Pune (2019–2021)
+- Built fraud detection model with XGBoost achieving 97.2% AUC on 50M-row dataset
+- Engineered feature pipelines with Spark processing 2TB daily
+- Developed REST APIs with Flask for internal model serving
+- Collaborated with data scientists to move 4 notebook prototypes into production
+
+SKILLS
+Languages: Python (expert), SQL, Bash
+ML Frameworks: scikit-learn, XGBoost, LightGBM, PyTorch, TensorFlow
+MLOps: MLflow, Docker, Kubernetes, GitHub Actions, SageMaker
+Data: Pandas, NumPy, Spark, Dask
+Cloud: AWS (SageMaker, S3, EC2, Lambda, ECS, EKS), GCP (Vertex AI, BigQuery)
+APIs: FastAPI, Flask
+LLMs: LangChain, OpenAI API, Hugging Face Transformers
+Orchestration: Airflow, Prefect
+
+EDUCATION
+B.Tech in Computer Science — BITS Pilani (2019) | GPA: 8.7/10
+
+CERTIFICATIONS
+- AWS Certified Machine Learning Specialty
+- Google Professional Data Engineer

@@ -1,0 +1,36 @@
+ROHAN MEHTA
+Data Scientist | rohan.mehta@email.com | github.com/rohanmehta
+
+SUMMARY
+Data Scientist with 3 years of experience in machine learning and data analysis.
+Comfortable working across the data pipeline from EDA to model training.
+
+EXPERIENCE
+
+Data Scientist — FinSight Analytics, Mumbai (2022–Present)
+- Built classification models using scikit-learn and XGBoost for customer churn prediction
+- Performed EDA and feature engineering on datasets up to 2M rows using Pandas and NumPy
+- Deployed models as Flask APIs on an internal server
+- Worked with SQL databases to extract and prepare training data
+- Tracked experiments using spreadsheets and local scripts (not MLflow)
+
+Junior Data Analyst — RetailMind, Mumbai (2021–2022)
+- Wrote SQL queries for business reporting and dashboards
+- Created Python scripts for data cleaning using Pandas
+- Assisted in building a basic recommendation engine prototype (never deployed)
+
+SKILLS
+Languages: Python, SQL
+ML: scikit-learn, XGBoost, basic TensorFlow (tutorials only)
+Data: Pandas, NumPy, Matplotlib, Seaborn
+APIs: Flask (basic)
+Version Control: Git
+Cloud: Basic AWS S3 and EC2 (no SageMaker experience)
+Tools: Jupyter Notebook, VS Code
+
+EDUCATION
+B.E. in Information Technology — University of Mumbai (2021) | GPA: 7.2/10
+
+PROJECTS
+- Customer Churn Predictor: XGBoost model with 84% accuracy (personal project)
+- Movie Recommendation System: Collaborative filtering using surprise library

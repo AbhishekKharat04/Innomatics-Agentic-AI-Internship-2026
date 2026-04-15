@@ -1,0 +1,39 @@
+Job Title: Senior Machine Learning Engineer
+
+Company: DataCore Systems
+Location: Remote / Hybrid
+Type: Full-Time
+
+About the Role:
+We are seeking a Senior Machine Learning Engineer to join our AI platform team.
+You will design, build, and deploy production ML systems that power our core
+data products, working across the full ML lifecycle — from research to deployment.
+
+Required Skills:
+- Python (advanced proficiency)
+- Machine Learning: scikit-learn, XGBoost, LightGBM
+- Deep Learning: PyTorch or TensorFlow
+- MLOps: MLflow, model versioning, experiment tracking
+- Data Engineering: Pandas, NumPy, SQL
+- Cloud Platforms: AWS (SageMaker, S3, EC2) or GCP (Vertex AI)
+- API Development: FastAPI or Flask
+- Version Control: Git, GitHub
+
+Preferred / Bonus Skills:
+- LangChain or LLM-based application development
+- Docker and Kubernetes
+- Airflow or Prefect for pipeline orchestration
+- Spark or Dask for large-scale data processing
+- A/B testing and statistical analysis
+
+Experience Requirements:
+- 4+ years of professional ML engineering experience
+- Experience deploying models to production (not just notebooks)
+- Demonstrated ability to work with large datasets (10M+ rows)
+
+Responsibilities:
+- Build and maintain ML pipelines end-to-end
+- Collaborate with data scientists to productionize models
+- Implement monitoring and observability for deployed models
+- Mentor junior engineers
+- Write clean, testable, well-documented code

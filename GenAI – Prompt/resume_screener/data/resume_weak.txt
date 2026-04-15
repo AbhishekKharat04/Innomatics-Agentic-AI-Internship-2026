@@ -1,0 +1,31 @@
+AMIT VERMA
+Software Developer | amit.verma@email.com
+
+SUMMARY
+Recent graduate with interest in data science and machine learning. Looking for opportunities
+to apply my academic knowledge in a professional environment.
+
+EXPERIENCE
+
+Junior Web Developer — FreelanceWork (2023–Present, part-time)
+- Built small websites using HTML, CSS, JavaScript
+- Used Python scripts for some automation tasks
+- No professional ML or data science experience yet
+
+SKILLS
+Languages: Python (beginner), JavaScript, HTML, CSS
+ML: Completed a few Coursera courses (Andrew Ng's ML course)
+Data: Basic Pandas usage from tutorials
+Version Control: Git (basic)
+Tools: Jupyter Notebook
+
+EDUCATION
+B.Sc. in Computer Science — Local State University (2023) | GPA: 6.1/10
+
+CERTIFICATIONS
+- Coursera Machine Learning Specialization (Andrew Ng) — in progress
+- Udemy Python Bootcamp — completed
+
+PROJECTS
+- Iris Flower Classification: Logistic regression on the Iris dataset (Kaggle tutorial)
+- Titanic Survival Prediction: Followed a YouTube tutorial on Kaggle competition
