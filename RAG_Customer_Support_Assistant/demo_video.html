@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG Customer Support Assistant - Demo</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0f1e;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    min-height: 100vh; color: #e2e8f0;
+  }
+  .header {
+    text-align: center; margin-bottom: 24px;
+    animation: fadeIn 0.8s ease;
+  }
+  .header h1 { font-size: 28px; font-weight: 700; color: #60a5fa; }
+  .header p { font-size: 14px; color: #94a3b8; margin-top: 4px; }
+  .badge-row { display: flex; gap: 8px; justify-content: center; margin-top: 10px; flex-wrap: wrap; }
+  .badge {
+    background: #1e293b; border: 1px solid #334155;
+    border-radius: 20px; padding: 4px 12px; font-size: 11px; color: #7dd3fc;
+  }
+  .app-window {
+    width: 860px; background: #111827;
+    border-radius: 16px; border: 1px solid #1e3a5f;
+    box-shadow: 0 0 80px rgba(37, 99, 235, 0.15);
+    overflow: hidden;
+    animation: slideUp 0.8s ease;
+  }
+  .titlebar {
+    background: #0f172a; padding: 12px 20px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid #1e293b;
+  }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot.red { background: #f87171; }
+  .dot.yellow { background: #fbbf24; }
+  .dot.green { background: #34d399; }
+  .titlebar-text { color: #64748b; font-size: 13px; margin-left: 8px; }
+
+  .layout { display: flex; height: 520px; }
+
+  /* Left: Chat */
+  .chat-pane { flex: 3; display: flex; flex-direction: column; border-right: 1px solid #1e293b; }
+  .chat-messages { flex: 1; overflow: hidden; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+
+  .msg { display: flex; gap: 10px; animation: msgIn 0.4s ease; }
+  .msg.bot { flex-direction: row; }
+  .msg.user { flex-direction: row-reverse; }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .avatar.bot-av { background: #1e3a8a; }
+  .avatar.user-av { background: #14532d; }
+  .bubble {
+    max-width: 70%; padding: 12px 16px; border-radius: 14px;
+    font-size: 13px; line-height: 1.6;
+  }
+  .bubble.bot { background: #1e3a5f; border-bottom-left-radius: 4px; }
+  .bubble.user { background: #14532d; border-bottom-right-radius: 4px; text-align: right; }
+  .meta { font-size: 10px; color: #64748b; margin-top: 6px; }
+  .confidence-badge {
+    display: inline-block; background: #0f2544;
+    border: 1px solid #1e3a5f; border-radius: 20px;
+    padding: 2px 10px; font-size: 10px; color: #7dd3fc; margin-top: 4px;
+  }
+  .hitl-badge {
+    display: inline-block; background: #450a0a;
+    border: 1px solid #7f1d1d; border-radius: 20px;
+    padding: 2px 10px; font-size: 10px; color: #fca5a5; margin-top: 4px;
+  }
+
+  .chat-input { padding: 16px; border-top: 1px solid #1e293b; display: flex; gap: 10px; }
+  .input-box {
+    flex: 1; background: #0f172a; border: 1px solid #334155;
+    border-radius: 10px; padding: 10px 14px; color: #e2e8f0; font-size: 13px;
+    outline: none;
+  }
+  .send-btn {
+    background: #2563eb; color: white; border: none;
+    border-radius: 10px; padding: 10px 18px; font-size: 13px; cursor: pointer;
+  }
+
+  /* Right: Architecture panel */
+  .arch-pane { flex: 1; padding: 20px; overflow: hidden; }
+  .arch-pane h3 { font-size: 13px; color: #60a5fa; margin-bottom: 16px; font-weight: 600; }
+  .flow-node {
+    background: #0f172a; border: 1px solid #1e293b;
+    border-radius: 10px; padding: 10px 14px; margin-bottom: 10px;
+    font-size: 11px; position: relative; transition: all 0.3s;
+  }
+  .flow-node.active { border-color: #2563eb; background: #1e3a5f; box-shadow: 0 0 12px rgba(37,99,235,0.3); }
+  .flow-node .node-icon { font-size: 16px; margin-right: 6px; }
+  .flow-node .node-label { color: #94a3b8; font-size: 10px; display: block; margin-top: 3px; }
+  .flow-arrow { text-align: center; color: #475569; font-size: 12px; margin: 2px 0; }
+
+  .stats { margin-top: 20px; }
+  .stat { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 11px; }
+  .stat-bar { height: 4px; background: #1e293b; border-radius: 2px; margin-top: 4px; overflow: hidden; }
+  .stat-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
+
+  /* Typing indicator */
+  .typing { display: flex; gap: 4px; padding: 8px 12px; }
+  .typing span { width: 7px; height: 7px; background: #60a5fa; border-radius: 50%; animation: bounce 1s infinite; }
+  .typing span:nth-child(2) { animation-delay: 0.15s; }
+  .typing span:nth-child(3) { animation-delay: 0.3s; }
+
+  @keyframes bounce { 0%,80%,100% { transform: scale(0.8); opacity: 0.4; } 40% { transform: scale(1.2); opacity: 1; } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes msgIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+  .cursor { display: inline-block; animation: pulse 0.8s infinite; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🤖 RAG Customer Support Assistant</h1>
+  <p>Real-time demo • LangGraph + Groq Llama 3 + ChromaDB + HuggingFace Embeddings</p>
+  <div class="badge-row">
+    <span class="badge">LangGraph</span>
+    <span class="badge">Groq Llama 3</span>
+    <span class="badge">ChromaDB</span>
+    <span class="badge">Sentence Transformers</span>
+    <span class="badge">HITL</span>
+    <span class="badge">Python</span>
+  </div>
+</div>
+
+<div class="app-window">
+  <div class="titlebar">
+    <div class="dot red"></div>
+    <div class="dot yellow"></div>
+    <div class="dot green"></div>
+    <span class="titlebar-text">RAG Support Assistant • Powered by Groq · HF Spaces</span>
+  </div>
+  <div class="layout">
+    <!-- Chat -->
+    <div class="chat-pane">
+      <div class="chat-messages" id="messages">
+        <div class="msg bot">
+          <div class="avatar bot-av">🤖</div>
+          <div class="bubble bot">
+            Hello! I'm your AI support assistant. I have access to the full product knowledge base. How can I help you today?
+          </div>
+        </div>
+      </div>
+      <div class="chat-input">
+        <input class="input-box" id="inputBox" placeholder="Ask a customer support question..." readonly>
+        <button class="send-btn">Send ➤</button>
+      </div>
+    </div>
+
+    <!-- Architecture -->
+    <div class="arch-pane">
+      <h3>🏗️ Pipeline State</h3>
+      <div class="flow-node" id="node-input">
+        <span class="node-icon">📝</span> User Input
+        <span class="node-label">Question received</span>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-node" id="node-router">
+        <span class="node-icon">🔀</span> Router Node
+        <span class="node-label">Intent classification</span>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-node" id="node-embed">
+        <span class="node-icon">🧬</span> Embeddings
+        <span class="node-label">all-MiniLM-L6-v2 semantic search</span>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-node" id="node-chroma">
+        <span class="node-icon">🗄️</span> ChromaDB (MMR)
+        <span class="node-label">Top-4 chunks retrieved</span>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-node" id="node-llm">
+        <span class="node-icon">🧠</span> Groq Llama 3 8B
+        <span class="node-label">Grounded generation</span>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-node" id="node-out">
+        <span class="node-icon">✅</span> Response + Sources
+        <span class="node-label">Confidence scored</span>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><span>Latency</span><span id="latency">—</span></div>
+        <div class="stat-bar"><div class="stat-fill" id="latency-bar" style="width:0%;background:#60a5fa"></div></div>
+        <div class="stat"><span>Confidence</span><span id="conf-label">—</span></div>
+        <div class="stat-bar"><div class="stat-fill" id="conf-bar" style="width:0%;background:#34d399"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const conversations = [
+  {
+    user: "What are your customer support hours?",
+    bot: "Our customer support team is available Monday through Friday, 9 AM to 6 PM EST, and Saturday from 10 AM to 4 PM EST. You can also reach us anytime via email at support@company.com.",
+    type: "rag",
+    sources: "Page 2, Page 5",
+    conf: 92,
+    latency: "1.2s"
+  },
+  {
+    user: "How do I return a product I purchased?",
+    bot: "You can return any product within 30 days of purchase. Simply log into your account, navigate to 'Order History', select the item, and click 'Initiate Return'. A prepaid shipping label will be emailed to you within 24 hours.",
+    type: "rag",
+    sources: "Page 8",
+    conf: 88,
+    latency: "1.4s"
+  },
+  {
+    user: "I want to speak to a manager about my refund!",
+    bot: "I understand this is an important matter. I've escalated your query to a human support specialist who will reach out within 24 hours. Your ticket has been created. Is there anything else I can help you with in the meantime?",
+    type: "hitl",
+    sources: "Escalation System",
+    conf: 100,
+    latency: "0.3s"
+  },
+  {
+    user: "What payment methods do you accept?",
+    bot: "We accept all major credit and debit cards (Visa, Mastercard, Amex), PayPal, Apple Pay, Google Pay, and bank transfers for orders over $500. All transactions are secured with 256-bit SSL encryption.",
+    type: "rag",
+    sources: "Page 3, Page 11",
+    conf: 95,
+    latency: "1.1s"
+  },
+];
+
+let idx = 0;
+const nodes = ["node-input","node-router","node-embed","node-chroma","node-llm","node-out"];
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function clearActive() {
+  nodes.forEach(n => document.getElementById(n).classList.remove('active'));
+}
+
+async function typeText(el, text, speed=28) {
+  el.textContent = "";
+  for (let c of text) {
+    el.textContent += c;
+    await sleep(speed);
+  }
+}
+
+async function runConversation(conv) {
+  const messages = document.getElementById('messages');
+  const inputBox = document.getElementById('inputBox');
+
+  // Type into input box
+  await typeText(inputBox, conv.user, 40);
+  await sleep(600);
+
+  // Add user message
+  const userMsg = document.createElement('div');
+  userMsg.className = 'msg user';
+  userMsg.innerHTML = `<div class="avatar user-av">👤</div><div class="bubble user">${conv.user}</div>`;
+  messages.appendChild(userMsg);
+  inputBox.value = "";
+  messages.scrollTop = messages.scrollHeight;
+
+  await sleep(400);
+
+  // Animate pipeline nodes
+  for (let i = 0; i < nodes.length; i++) {
+    if (conv.type === 'hitl' && i >= 2 && i <= 4) {
+      await sleep(80); // skip embedding/llm for HITL
+      continue;
+    }
+    clearActive();
+    document.getElementById(nodes[i]).classList.add('active');
+    await sleep(500);
+  }
+
+  // Update stats
+  document.getElementById('latency').textContent = conv.latency;
+  document.getElementById('latency-bar').style.width = (parseFloat(conv.latency) / 2 * 100) + '%';
+  document.getElementById('conf-label').textContent = conv.conf + '%';
+  document.getElementById('conf-bar').style.width = conv.conf + '%';
+  document.getElementById('conf-bar').style.background = conv.conf > 80 ? '#34d399' : conv.conf > 50 ? '#fbbf24' : '#f87171';
+
+  // Show typing indicator
+  const typing = document.createElement('div');
+  typing.className = 'msg bot';
+  typing.innerHTML = `<div class="avatar bot-av">🤖</div><div class="bubble bot"><div class="typing"><span></span><span></span><span></span></div></div>`;
+  messages.appendChild(typing);
+  messages.scrollTop = messages.scrollHeight;
+  await sleep(1200);
+  messages.removeChild(typing);
+
+  // Add bot message with typewriter
+  const botMsg = document.createElement('div');
+  botMsg.className = 'msg bot';
+  const textSpan = document.createElement('span');
+  const badge = conv.type === 'hitl'
+    ? `<div class="hitl-badge">🔴 Escalated to Human Agent</div>`
+    : `<div class="confidence-badge">🟢 ${conv.conf}% confident · 📄 ${conv.sources}</div>`;
+  botMsg.innerHTML = `<div class="avatar bot-av">🤖</div><div class="bubble bot"><span id="typing-target"></span>${badge}</div>`;
+  messages.appendChild(botMsg);
+  messages.scrollTop = messages.scrollHeight;
+  await typeText(document.getElementById('typing-target'), conv.bot, 18);
+
+  clearActive();
+  await sleep(2500);
+}
+
+async function loop() {
+  while (true) {
+    for (const conv of conversations) {
+      await runConversation(conv);
+    }
+    // Clear messages (keep greeting)
+    const messages = document.getElementById('messages');
+    messages.innerHTML = `
+      <div class="msg bot">
+        <div class="avatar bot-av">🤖</div>
+        <div class="bubble bot">Hello! I'm your AI support assistant. I have access to the full product knowledge base. How can I help you today?</div>
+      </div>`;
+    document.getElementById('latency').textContent = '—';
+    document.getElementById('conf-label').textContent = '—';
+    document.getElementById('latency-bar').style.width = '0%';
+    document.getElementById('conf-bar').style.width = '0%';
+    await sleep(1000);
+  }
+}
+
+loop();
+</script>
+</body>
+</html>

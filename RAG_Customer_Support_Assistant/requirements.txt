@@ -2,7 +2,9 @@ langchain
 langchain-community
 langchain-huggingface
 langchain-groq
+langchain-text-splitters
 langgraph
 chromadb
 pypdf
 sentence-transformers
+gradio>=4.0.0
