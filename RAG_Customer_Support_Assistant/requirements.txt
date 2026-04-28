@@ -1,9 +1,8 @@
 langchain
 langchain-community
 langchain-huggingface
-langchain-ollama
+langchain-groq
 langgraph
 chromadb
 pypdf
 sentence-transformers
-fpdf2
