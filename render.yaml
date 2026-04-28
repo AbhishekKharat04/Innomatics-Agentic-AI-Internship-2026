@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: rag-customer-support-assistant
+    runtime: docker
+    rootDir: RAG_Customer_Support_Assistant
+    plan: free

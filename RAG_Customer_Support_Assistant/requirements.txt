@@ -6,3 +6,4 @@ langgraph
 chromadb
 pypdf
 sentence-transformers
+fpdf2
