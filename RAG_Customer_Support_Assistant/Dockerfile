@@ -21,5 +21,6 @@ COPY . ./
 RUN npm run build
 
 EXPOSE 8787
+ENV PORT=7860
 
 CMD ["node", "server/index.js"]

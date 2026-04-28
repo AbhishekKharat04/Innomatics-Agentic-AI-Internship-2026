@@ -1,3 +1,13 @@
+---
+title: RAG Customer Support Assistant
+emoji: 🤖
+colorFrom: orange
+colorTo: blue
+sdk: docker
+app_port: 7860
+license: mit
+---
+
 # RAG-Based Customer Support Assistant
 
 This project is a full-stack RAG customer support assistant built for the Innomatics Agentic AI internship project. It combines:

@@ -13,7 +13,8 @@ const projectRoot = path.resolve(__dirname, "..");
 const pythonFile = path.join(projectRoot, "rag_agent.py");
 const distDir = path.join(projectRoot, "dist");
 const pythonBin = process.env.PYTHON_BIN || "python";
-const PORT = Number(process.env.PORT || 8787);
+const PORT = Number(process.env.PORT || 7860);
+const HOST = process.env.HOST || "0.0.0.0";
 const allowedOrigins = new Set([
   "http://127.0.0.1:5173",
   "http://localhost:5173",
@@ -30,16 +31,18 @@ app.use(
     crossOriginEmbedderPolicy: false,
   }),
 );
-app.use(
-  cors({
-    origin(origin, callback) {
-      if (!origin || allowedOrigins.has(origin)) {
-        return callback(null, true);
-      }
-      return callback(new Error("Origin not allowed by CORS policy."));
-    },
-  }),
-);
+if (process.env.NODE_ENV !== "production") {
+  app.use(
+    cors({
+      origin(origin, callback) {
+        if (!origin || allowedOrigins.has(origin)) {
+          return callback(null, true);
+        }
+        return callback(new Error("Origin not allowed by CORS policy."));
+      },
+    }),
+  );
+}
 app.use(express.json({ limit: "8kb" }));
 
 const chatLimiter = rateLimit({
@@ -182,6 +185,6 @@ if (fs.existsSync(distDir)) {
   });
 }
 
-app.listen(PORT, "127.0.0.1", () => {
-  console.log(`RAG API listening on http://127.0.0.1:${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`RAG API listening on http://${HOST}:${PORT}`);
 });
