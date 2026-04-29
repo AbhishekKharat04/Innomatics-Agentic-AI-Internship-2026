@@ -252,7 +252,7 @@ EXAMPLES = [
     "My order hasn't arrived, what should I do?",
 ]
 
-with gr.Blocks(css=CSS, theme=gr.themes.Base()) as demo:
+with gr.Blocks() as demo:
     gr.HTML(HEADER)
 
     with gr.Row():
@@ -260,7 +260,6 @@ with gr.Blocks(css=CSS, theme=gr.themes.Base()) as demo:
             chatbot = gr.Chatbot(
                 elem_id="chatbot",
                 label="",
-                bubble_full_width=False,
                 avatar_images=("👤", "🤖"),
                 show_label=False,
             )
@@ -293,4 +292,4 @@ with gr.Blocks(css=CSS, theme=gr.themes.Base()) as demo:
 if __name__ == "__main__":
     if not os.environ.get("GROQ_API_KEY"):
         print("⚠️  Set GROQ_API_KEY in environment or HF Space Secrets.")
-    demo.launch()
+    demo.launch(css=CSS, theme=gr.themes.Base())
