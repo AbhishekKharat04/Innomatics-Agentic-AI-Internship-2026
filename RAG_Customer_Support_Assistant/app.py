@@ -190,36 +190,42 @@ def chat(user_message, history, state_hist, pipeline_state):
     yield history, state_hist, thinking_html, ""
 
     t0 = time.time()
-    result = GRAPH.invoke({
-        "question": user_message,
-        "chat_history": agent_history,
-        "context": [], "answer": "", "sources": [],
-        "confidence": 0.0, "requires_human": False,
-    })
-    elapsed = f"{time.time()-t0:.1f}s"
+    try:
+        result = GRAPH.invoke({
+            "question": user_message,
+            "chat_history": agent_history,
+            "context": [], "answer": "", "sources": [],
+            "confidence": 0.0, "requires_human": False,
+        })
+        elapsed = f"{time.time()-t0:.1f}s"
 
-    answer = result["answer"]
-    sources = result.get("sources", [])
-    confidence = result.get("confidence", 0.0)
-    is_hitl = result.get("requires_human", False)
+        answer = result["answer"]
+        sources = result.get("sources", [])
+        confidence = result.get("confidence", 0.0)
+        is_hitl = result.get("requires_human", False)
 
-    # Format answer with inline badges
-    conf_pct = int(confidence * 100)
-    conf_color = "#34d399" if confidence > 0.75 else "#fbbf24" if confidence > 0.45 else "#f87171"
-    src_text = ", ".join(sources) if sources else "Knowledge Base"
+        # Format answer with inline badges
+        conf_pct = int(confidence * 100)
+        conf_color = "#34d399" if confidence > 0.75 else "#fbbf24" if confidence > 0.45 else "#f87171"
+        src_text = ", ".join(sources) if sources else "Knowledge Base"
 
-    if is_hitl:
-        badge = '<br><span style="background:#450a0a;border:1px solid #7f1d1d;border-radius:20px;padding:2px 10px;font-size:11px;color:#fca5a5;">🔴 Escalated to Human Agent</span>'
-    else:
-        badge = f'<br><span style="background:#0f2544;border:1px solid #1e3a5f;border-radius:20px;padding:2px 10px;font-size:11px;color:#7dd3fc;">🟢 {conf_pct}% confident · 📄 {src_text}</span>'
+        if is_hitl:
+            badge = '<br><span style="background:#450a0a;border:1px solid #7f1d1d;border-radius:20px;padding:2px 10px;font-size:11px;color:#fca5a5;">🔴 Escalated to Human Agent</span>'
+        else:
+            badge = f'<br><span style="background:#0f2544;border:1px solid #1e3a5f;border-radius:20px;padding:2px 10px;font-size:11px;color:#7dd3fc;">🟢 {conf_pct}% confident · 📄 {src_text}</span>'
 
-    full_answer = answer + badge
+        full_answer = answer + badge
 
-    history.append((user_message, full_answer))
-    state_hist.append({"user": user_message, "assistant": answer})
+        history.append((user_message, full_answer))
+        state_hist.append({"user": user_message, "assistant": answer})
 
-    final_html = pipeline_html("node-out", confidence, elapsed, is_hitl, sources)
-    yield history, state_hist, final_html, ""
+        final_html = pipeline_html("node-out", confidence, elapsed, is_hitl, sources)
+        yield history, state_hist, final_html, ""
+    except Exception as e:
+        import traceback
+        err = traceback.format_exc()
+        history.append((user_message, f"**SYSTEM ERROR:**\n```python\n{err}\n```\n**Troubleshooting:**\n1. Ensure `knowledge_base.pdf` is uploaded to the Space.\n2. Ensure `GROQ_API_KEY` is set in Space Secrets."))
+        yield history, state_hist, pipeline_state, ""
 
 # ─────────────────────────────────────────────
 # GRADIO UI
